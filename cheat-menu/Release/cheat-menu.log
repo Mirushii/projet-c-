@@ -1,0 +1,9 @@
+﻿  cheat.cpp
+D:\dossiers Léa\Bureau\C++\Assault_cube_cheat_menu-main_beginner\Assault_cube_cheat_menu-main\cheat\cheat.cpp(23,12): error C2086: 'int cheat::initialArmor' : redéfinition
+      D:\dossiers Léa\Bureau\C++\Assault_cube_cheat_menu-main_beginner\Assault_cube_cheat_menu-main\cheat\cheat.h(27,16):
+      voir la déclaration de 'cheat::initialArmor'
+  
+D:\dossiers Léa\Bureau\C++\Assault_cube_cheat_menu-main_beginner\Assault_cube_cheat_menu-main\cheat\cheat.cpp(24,13): error C2086: 'bool cheat::isInfArmorOn' : redéfinition
+      D:\dossiers Léa\Bureau\C++\Assault_cube_cheat_menu-main_beginner\Assault_cube_cheat_menu-main\cheat\cheat.h(28,17):
+      voir la déclaration de 'cheat::isInfArmorOn'
+  
