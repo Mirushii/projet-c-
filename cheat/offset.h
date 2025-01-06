@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 
-// Lists
 constexpr auto localPlayer = 0x109B74;
 constexpr auto entityList = 0x10F4F8;
 
@@ -24,10 +23,9 @@ constexpr auto dwViewMatrix = 0x501AE8;
 
 constexpr auto m_Nades = 0x158;
 constexpr auto m_Ammo = 0x150;
-constexpr auto m_recoil1 = 0x63786;
+constexpr auto m_recoil1 = 0x00004C;
 
 
 constexpr auto rapidFire = 0x164;
-constexpr auto m_iAmmo = 0x150;
+constexpr std::uintptr_t m_iAmmo = 0x150;
 
-constexpr auto m_iArmor = 0x131A604; // Remplacez <offset_armure> par l'offset correct
