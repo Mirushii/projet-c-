@@ -19,10 +19,6 @@ bool cheat::isInfNadeOn = false;
 bool cheat::isInfAmmoOn = false;
 bool cheat::isNoRecoilOn = false;
 bool cheat::isGetInfoOn = false;
-
-int cheat::initialArmor = 0;
-bool cheat::isInfArmorOn = false;
-
 std::uintptr_t cheat::headPtr = 0;
 std::uintptr_t cheat::entityL = 0;
 std::uintptr_t cheat::entity = 0;
@@ -51,7 +47,7 @@ void cheat::godmodeon() noexcept {
     const auto healthAddress = localPlayerPtr + m_iHealth;
 
     if (healthAddress == 0) {
-        std::cerr << "Erreur : Adresse de la santé est nulle." << std::endl;
+        std::cerr << "Erreur : Adresse de la santÃ© est nulle." << std::endl;
         return;
     }
 
@@ -96,7 +92,7 @@ void cheat::godmodeoff() noexcept {
     const auto healthAddress = localPlayerPtr + m_iHealth;
 
     if (healthAddress == 0) {
-        std::cerr << "Erreur : Adresse de la santé est nulle." << std::endl;
+        std::cerr << "Erreur : Adresse de la santÃ© est nulle." << std::endl;
         return;
     }
 
@@ -104,11 +100,10 @@ void cheat::godmodeoff() noexcept {
 
     memory.Write<int>(healthAddress, initialHealth);
 }
-// Implémentation des fonctions pour les grenades infinies
 
 void cheat::infnadeon() noexcept {
     if (isInfNadeOn) {
-        return; // Si les grenades infinies sont déjà activées, on ne fait rien
+        return;
     }
 
     auto& memory = getMemory();
@@ -133,27 +128,27 @@ void cheat::infnadeon() noexcept {
         return;
     }
 
-    initialNade = memory.Read<int>(nadeAddress); // Stocker la valeur initiale des grenades
+    initialNade = memory.Read<int>(nadeAddress);
 
-    isInfNadeOn = true; // Activer les grenades infinies
+    isInfNadeOn = true;
 
     std::thread([nadeAddress]() {
         auto& mem = getMemory();
         while (cheat::isInfNadeOn) {
-            int currentNades = mem.Read<int>(nadeAddress); // Lire le nombre de grenades actuelles
+            int currentNades = mem.Read<int>(nadeAddress);
 
-            if (currentNades != 999) { // Si le nombre de grenades n'est pas 999, on le remplace par 999
+            if (currentNades != 999) {
                 mem.Write<int>(nadeAddress, 999);
             }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Attendre un court instant avant de vérifier à nouveau
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        }).detach(); // Détacher le thread pour qu'il fonctionne en parallèle
+        }).detach();
 }
 
 void cheat::infnadeoff() noexcept {
     if (!isInfNadeOn) {
-        return; // Si les grenades infinies ne sont pas activées, ne rien faire
+        return;
     }
 
     auto& memory = getMemory();
@@ -178,9 +173,9 @@ void cheat::infnadeoff() noexcept {
         return;
     }
 
-    isInfNadeOn = false; // Désactiver les grenades infinies
+    isInfNadeOn = false;
 
-    memory.Write<int>(nadeAddress, initialNade); // Restaurer la valeur initiale des grenades
+    memory.Write<int>(nadeAddress, initialNade);
 }
 
 void cheat::infammoon() noexcept {
@@ -219,7 +214,6 @@ void cheat::infammoon() noexcept {
         while (cheat::isInfAmmoOn) {
             int currentAmmo = mem.Read<int>(ammoAddress);
 
-            // Si les munitions sont à 950 ou moins, les remettre à 999
             if (currentAmmo <= 950) {
                 mem.Write<int>(ammoAddress, 999);
             }
@@ -261,9 +255,9 @@ void cheat::infammooff() noexcept {
     memory.Write<int>(ammoAddress, initialAmmo);
 }
 
-void cheat::infarmoron() noexcept {
-    if (cheat::isInfArmorOn) {
-        return; // Si le mode armure infinie est déjà activé, ne rien faire
+void cheat::norecoilon() noexcept {
+    if (isNoRecoilOn) {
+        return;
     }
 
     auto& memory = getMemory();
@@ -274,41 +268,42 @@ void cheat::infarmoron() noexcept {
         return;
     }
 
-    const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
+    const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + 0x109B74);
 
     if (localPlayerPtr == 0) {
         std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
         return;
     }
 
-    const auto armorAddress = localPlayerPtr + m_iArmor;
+    const auto recoilAddress = localPlayerPtr + 0x00004C;
 
-    if (armorAddress == 0) {
-        std::cerr << "Erreur : Adresse de l'armure est nulle." << std::endl;
+    if (recoilAddress == 0) {
+        std::cerr << "Erreur : Adresse du recul est nulle." << std::endl;
         return;
     }
 
-    initialArmor = memory.Read<int>(armorAddress); // Stocker la valeur initiale de l'armure
+    isNoRecoilOn = true;
 
-    isInfArmorOn = true; // Activer l'armure infinie
-
-    std::thread([armorAddress]() {
+    std::thread([recoilAddress]() {
         auto& mem = getMemory();
-        while (cheat::isInfArmorOn) {
-            int currentArmor = mem.Read<int>(armorAddress); // Lire la valeur actuelle de l'armure
+        while (cheat::isNoRecoilOn) {
+            float currentRecoil = mem.Read<float>(recoilAddress);
 
-            if (currentArmor < 100) { // Si l'armure est inférieure à 100, la réinitialiser à 100
-                mem.Write<int>(armorAddress, 100);
+            if (currentRecoil != 0.0f) {
+                mem.Write<float>(recoilAddress, 0.0f);
             }
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Répéter toutes les 10ms
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        }).detach(); // Détacher le thread
+        }).detach();
 }
 
+void cheat::norecoiloff() noexcept {
+    if (!isNoRecoilOn) {
+        return;
+    }
 
-void cheat::norecoilon() noexcept {}
-
-void cheat::norecoiloff() noexcept {}
+    isNoRecoilOn = false;
+}
 
 void cheat::getinfoon() noexcept {}
