@@ -25,284 +25,164 @@ std::uintptr_t cheat::entity = 0;
 float cheat::headValue = 0.0f;
 
 void cheat::godmodeon() noexcept {
-    if (isGodModeOn) {
-        return;
-    }
+    if (isGodModeOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto healthAddress = localPlayerPtr + m_iHealth;
-
-    if (healthAddress == 0) {
-        std::cerr << "Erreur : Adresse de la santé est nulle." << std::endl;
-        return;
-    }
+    if (healthAddress == 0) return;
 
     initialHealth = memory.Read<int>(healthAddress);
-
     isGodModeOn = true;
 
-    std::thread([](std::uintptr_t healthAddr) {
+    std::thread([healthAddress]() {
         auto& mem = getMemory();
         while (cheat::isGodModeOn) {
-            int currentHealth = mem.Read<int>(healthAddr);
-
-            if (currentHealth < 9999) {
-                mem.Write<int>(healthAddr, 9999);
+            if (mem.Read<int>(healthAddress) < 9999) {
+                mem.Write<int>(healthAddress, 9999);
             }
-
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-        }, healthAddress).detach();
+        }).detach();
 }
 
 void cheat::godmodeoff() noexcept {
-    if (!isGodModeOn) {
-        return;
-    }
+    if (!isGodModeOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto healthAddress = localPlayerPtr + m_iHealth;
-
-    if (healthAddress == 0) {
-        std::cerr << "Erreur : Adresse de la santé est nulle." << std::endl;
-        return;
-    }
+    if (healthAddress == 0) return;
 
     isGodModeOn = false;
-
     memory.Write<int>(healthAddress, initialHealth);
 }
 
 void cheat::infnadeon() noexcept {
-    if (isInfNadeOn) {
-        return;
-    }
+    if (isInfNadeOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto nadeAddress = localPlayerPtr + m_Nades;
-
-    if (nadeAddress == 0) {
-        std::cerr << "Erreur : Adresse des grenades est nulle." << std::endl;
-        return;
-    }
+    if (nadeAddress == 0) return;
 
     initialNade = memory.Read<int>(nadeAddress);
-
     isInfNadeOn = true;
 
     std::thread([nadeAddress]() {
         auto& mem = getMemory();
         while (cheat::isInfNadeOn) {
-            int currentNades = mem.Read<int>(nadeAddress);
-
-            if (currentNades != 999) {
+            if (mem.Read<int>(nadeAddress) != 999) {
                 mem.Write<int>(nadeAddress, 999);
             }
-
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         }).detach();
 }
 
 void cheat::infnadeoff() noexcept {
-    if (!isInfNadeOn) {
-        return;
-    }
+    if (!isInfNadeOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto nadeAddress = localPlayerPtr + m_Nades;
-
-    if (nadeAddress == 0) {
-        std::cerr << "Erreur : Adresse des grenades est nulle." << std::endl;
-        return;
-    }
+    if (nadeAddress == 0) return;
 
     isInfNadeOn = false;
-
     memory.Write<int>(nadeAddress, initialNade);
 }
 
 void cheat::infammoon() noexcept {
-    if (isInfAmmoOn) {
-        return;
-    }
+    if (isInfAmmoOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto ammoAddress = localPlayerPtr + m_iAmmo;
-
-    if (ammoAddress == 0) {
-        std::cerr << "Erreur : Adresse des munitions est nulle." << std::endl;
-        return;
-    }
+    if (ammoAddress == 0) return;
 
     initialAmmo = memory.Read<int>(ammoAddress);
-
     isInfAmmoOn = true;
 
     std::thread([ammoAddress]() {
         auto& mem = getMemory();
         while (cheat::isInfAmmoOn) {
-            int currentAmmo = mem.Read<int>(ammoAddress);
-
-            if (currentAmmo <= 950) {
+            if (mem.Read<int>(ammoAddress) <= 950) {
                 mem.Write<int>(ammoAddress, 999);
             }
-
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
         }).detach();
 }
 
 void cheat::infammooff() noexcept {
-    if (!isInfAmmoOn) {
-        return;
-    }
+    if (!isInfAmmoOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + localPlayer);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto ammoAddress = localPlayerPtr + m_iAmmo;
-
-    if (ammoAddress == 0) {
-        std::cerr << "Erreur : Adresse des munitions est nulle." << std::endl;
-        return;
-    }
+    if (ammoAddress == 0) return;
 
     isInfAmmoOn = false;
-
     memory.Write<int>(ammoAddress, initialAmmo);
 }
 
 void cheat::norecoilon() noexcept {
-    if (isNoRecoilOn) {
-        return;
-    }
+    if (isNoRecoilOn) return;
 
     auto& memory = getMemory();
     const auto moduleBase = memory.GetModuleAddress("ac_client.exe");
-
-    if (moduleBase == 0) {
-        std::cerr << "Erreur : Module ac_client.exe introuvable." << std::endl;
-        return;
-    }
+    if (moduleBase == 0) return;
 
     const auto localPlayerPtr = memory.Read<std::uintptr_t>(moduleBase + 0x109B74);
-
-    if (localPlayerPtr == 0) {
-        std::cerr << "Erreur : Pointeur localPlayerPtr est nul." << std::endl;
-        return;
-    }
+    if (localPlayerPtr == 0) return;
 
     const auto recoilAddress = localPlayerPtr + 0x00004C;
-
-    if (recoilAddress == 0) {
-        std::cerr << "Erreur : Adresse du recul est nulle." << std::endl;
-        return;
-    }
+    const auto shootRecoilAddress = localPlayerPtr + 0x000050;
+    if (recoilAddress == 0 || shootRecoilAddress == 0) return;
 
     isNoRecoilOn = true;
-
-    std::thread([recoilAddress]() {
+    std::thread([recoilAddress, shootRecoilAddress]() {
         auto& mem = getMemory();
         while (cheat::isNoRecoilOn) {
-            float currentRecoil = mem.Read<float>(recoilAddress);
-
-            if (currentRecoil != 0.0f) {
-                mem.Write<float>(recoilAddress, 0.0f);
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            mem.Write<float>(recoilAddress, 0.0f);
+            mem.Write<float>(shootRecoilAddress, 0.0f);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
         }).detach();
 }
 
 void cheat::norecoiloff() noexcept {
-    if (!isNoRecoilOn) {
-        return;
-    }
-
+    if (!isNoRecoilOn) return;
     isNoRecoilOn = false;
 }
 
