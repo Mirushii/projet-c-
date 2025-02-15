@@ -28,4 +28,3 @@ constexpr auto m_recoil1 = 0x00004C;
 
 constexpr auto rapidFire = 0x164;
 constexpr std::uintptr_t m_iAmmo = 0x150;
-
